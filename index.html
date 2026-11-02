@@ -1,0 +1,183 @@
+
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#176b50">
+  <meta name="description" content="Control personal de ingresos, gastos y saldo.">
+  <title>Mi Balance | Finanzas personales</title>
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="manifest" href="./manifest.json">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-icon" aria-hidden="true">MB</div>
+      <div>
+        <h1>Mi Balance</h1>
+        <p>Control de finanzas personales</p>
+      </div>
+    </div>
+    <span class="local-badge">Datos en este dispositivo</span>
+  </header>
+
+  <main class="container">
+    <section class="balance-card" aria-labelledby="balanceTitle">
+      <p id="balanceTitle">Saldo registrado</p>
+      <h2 id="currentBalance" aria-live="polite">$0.00</h2>
+      <div class="summary-grid">
+        <article>
+          <span>Ingresos del mes</span>
+          <strong id="monthIncome" class="positive">$0.00</strong>
+        </article>
+        <article>
+          <span>Gastos del mes</span>
+          <strong id="monthExpenses" class="negative">$0.00</strong>
+        </article>
+      </div>
+      <p class="muted-light" id="currentPeriod"></p>
+    </section>
+
+    <section class="panel" aria-labelledby="formTitle">
+      <div class="section-heading">
+        <div>
+          <h2 id="formTitle">Registrar movimiento</h2>
+          <p>Captura un ingreso o un gasto.</p>
+        </div>
+      </div>
+
+      <form id="movementForm">
+        <input type="hidden" id="movementId">
+
+        <div class="field">
+          <label for="type">Tipo de movimiento</label>
+          <select id="type" required>
+            <option value="gasto">Gasto</option>
+            <option value="ingreso">Ingreso</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="amount">Importe (MXN)</label>
+          <input id="amount" type="number" min="0.01" max="999999999"
+                 step="0.01" inputmode="decimal" placeholder="0.00" required>
+        </div>
+
+        <div class="field">
+          <label for="category">Categoría</label>
+          <select id="category" required></select>
+        </div>
+
+        <div class="field">
+          <label for="date">Fecha</label>
+          <input id="date" type="date" required>
+        </div>
+
+        <div class="field">
+          <label for="concept">Concepto</label>
+          <input id="concept" type="text" maxlength="120"
+                 placeholder="Ej. Compra de supermercado">
+        </div>
+
+        <div class="field">
+          <label for="paymentMethod">Forma de pago o recepción</label>
+          <select id="paymentMethod" required>
+            <option value="Efectivo">Efectivo</option>
+            <option value="Tarjeta de débito">Tarjeta de débito</option>
+            <option value="Tarjeta de crédito">Tarjeta de crédito</option>
+            <option value="Transferencia">Transferencia</option>
+            <option value="Depósito">Depósito</option>
+            <option value="Otro">Otro</option>
+          </select>
+        </div>
+
+        <div class="form-actions">
+          <button class="button primary" id="saveButton" type="submit">
+            Guardar movimiento
+          </button>
+          <button class="button secondary" id="cancelEdit"
+                  type="button" hidden>Cancelar edición</button>
+        </div>
+      </form>
+      <p id="formMessage" class="message" role="status"></p>
+    </section>
+
+    <section class="panel" aria-labelledby="historyTitle">
+      <div class="section-heading">
+        <div>
+          <h2 id="historyTitle">Historial de movimientos</h2>
+          <p>Consulta, edita o elimina tus registros.</p>
+        </div>
+      </div>
+
+      <div class="filters">
+        <div class="field">
+          <label for="filterMonth">Mes</label>
+          <input id="filterMonth" type="month">
+        </div>
+        <div class="field">
+          <label for="filterType">Tipo</label>
+          <select id="filterType">
+            <option value="todos">Todos</option>
+            <option value="ingreso">Ingresos</option>
+            <option value="gasto">Gastos</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="searchText">Buscar concepto</label>
+          <input id="searchText" type="search" placeholder="Buscar...">
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Movimiento</th>
+              <th>Categoría</th>
+              <th>Forma de pago</th>
+              <th class="numeric">Importe</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="movementList"></tbody>
+        </table>
+      </div>
+      <p id="emptyMessage" class="empty-state">Todavía no hay movimientos registrados.</p>
+      <p id="historyCount" class="history-count"></p>
+    </section>
+
+    <section class="panel" aria-labelledby="backupTitle">
+      <div class="section-heading">
+        <div>
+          <h2 id="backupTitle">Respaldo de datos</h2>
+          <p>Guarda una copia y restáurala cuando la necesites.</p>
+        </div>
+      </div>
+      <div class="backup-actions">
+        <button class="button secondary" id="exportButton" type="button">
+          Exportar respaldo JSON
+        </button>
+        <label class="button secondary file-button" for="importFile">
+          Importar respaldo JSON
+        </label>
+        <input id="importFile" type="file" accept=".json,application/json" hidden>
+      </div>
+      <p class="notice">
+        La restauración reemplaza los movimientos existentes por los del archivo.
+        Exporta un respaldo antes de restaurar. Guarda el archivo en un lugar privado.
+      </p>
+      <p id="backupMessage" class="message" role="status"></p>
+    </section>
+
+    <footer>
+      <p>Mi Balance · Primera versión · Moneda: pesos mexicanos (MXN)</p>
+      <p>Los movimientos se guardan en el navegador de este dispositivo.</p>
+    </footer>
+  </main>
+
+  <script src="./app.js" defer></script>
+</body>
+</html>
