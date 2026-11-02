@@ -1,0 +1,14 @@
+
+{
+  "id": "./",
+  "name": "Mi Balance - Finanzas personales",
+  "short_name": "Mi Balance",
+  "description": "Control personal de ingresos, gastos y saldo en pesos mexicanos.",
+  "lang": "es-MX",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#176b50",
+  "background_color": "#f4f7f5"
+}
